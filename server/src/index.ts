@@ -23,7 +23,7 @@ app.use("/api/v1/blog/*", async (c, next) => {
 
   if (!id) {
     c.status(401);
-    c.json({ msg: "unauthorized" });
+    return c.json({ msg: "unauthorized" });
   }
 
   next();
@@ -40,16 +40,21 @@ app.post("/api/v1/signup", async (c) => {
 
   const body = await c.req.json();
 
-  const user = await prisma.user.create({
-    data: {
-      email: body.email,
-      password: body.password,
-    },
-  });
+  try {
+    const user = await prisma.user.create({
+      data: {
+        email: body.email,
+        password: body.password,
+      },
+    });
 
-  const token = await sign({ id: user.id }, c.env.JWT_SECRET);
+    const token = await sign({ id: user.id }, c.env.JWT_SECRET);
 
-  return c.json({ jwt: token });
+    return c.json({ jwt: token });
+  } catch (e) {
+    c.status(403);
+    return c.text("User already exists!");
+  }
 });
 
 app.post("/api/v1/signin", async (c) => {
