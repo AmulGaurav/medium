@@ -1,10 +1,10 @@
 import "./App.css";
 import { Routes, Route } from "react-router";
 import { ThemeProvider } from "./context/themeProvider";
+import Navbar from "./components/Navbar";
 import Blog from "./pages/Blog";
 import Signup from "./pages/Signup";
-import Signin from "./pages/Signin";
-import Navbar from "./components/Navbar";
+import Login from "./pages/Login";
 
 function App() {
   return (
@@ -12,12 +12,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route index element={<Blog />} />
-        {/* <Route path="about" element={<About />} /> */}
-
-        {/* <Route element={<AuthLayout />}> */}
-        <Route path="login" element={<Signin />} />
+        <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
-        {/* </Route> */}
 
         <Route path="blogs">
           <Route index element={<Blog />} />

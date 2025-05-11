@@ -1,6 +1,7 @@
-import AuthLayout from "@/layouts/AuthLayout";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signinInput, type SigninInput } from "@amulgaurav/medium-common";
+import AuthLayout from "@/layouts/AuthLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router";
@@ -14,49 +15,32 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { signupInput, type SignupInput } from "@amulgaurav/medium-common";
 
-function Signup() {
-  const form = useForm<SignupInput>({
-    resolver: zodResolver(signupInput),
+function Login() {
+  const form = useForm<SigninInput>({
+    resolver: zodResolver(signinInput),
     defaultValues: {
-      name: "",
       email: "",
       password: "",
     },
   });
 
-  async function onSubmit(values: SignupInput) {
+  async function onSubmit(values: SigninInput) {
     console.log(values);
-    // const { name, email, password } = values;
-
-    // try {
-    //   const response = await apiClient.post("/user/signup", {
-    //     name,
-    //     email,
-    //     password,
-    //   });
-    //   localStorage.setItem("token", response.data?.token);
-
-    //   alert("User registered successfully!");
-    //   // router.push("/");
-    // } catch {
-
-    // }
+    // const { email, password } = values;
   }
 
   return (
     <AuthLayout>
       <CardHeader>
-        <CardTitle>Signup</CardTitle>
+        <CardTitle>Login</CardTitle>
         <CardDescription>
-          Enter your details below to create a new account
+          Enter your email below to login to your account
         </CardDescription>
       </CardHeader>
 
@@ -64,23 +48,6 @@ function Signup() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      This is your public display name.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="email"
@@ -104,16 +71,13 @@ function Signup() {
                     <FormControl>
                       <Input type="password" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      Password must be at least 6 characters long.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
               <Button type="submit" className="w-full cursor-pointer">
-                Signup
+                Login
               </Button>
             </div>
           </form>
@@ -122,14 +86,13 @@ function Signup() {
 
       <CardFooter className="flex justify-center">
         <div className="mt-4 text-center text-sm">
-          Already have an account?{" "}
-          <Link to="/login" className="underline underline-offset-4">
-            Login
+          Don&apos;t have an account?{" "}
+          <Link to="/signup" className="underline underline-offset-4">
+            Sign up
           </Link>
         </div>
       </CardFooter>
     </AuthLayout>
   );
 }
-
-export default Signup;
+export default Login;
