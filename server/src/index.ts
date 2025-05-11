@@ -1,88 +1,14 @@
 import { Hono } from "hono";
-import { PrismaClient } from "@prisma/client/edge";
-import { withAccelerate } from "@prisma/extension-accelerate";
-import { decode, sign, verify } from "hono/jwt";
+import { blogRouter } from "./routes/blog";
+import { userRouter } from "./routes/user";
 
-const app = new Hono<{
-  Bindings: {
-    DATABASE_URL: string;
-    JWT_SECRET: string;
-  };
-}>();
-
-// middleware
-app.use("/api/v1/blog/*", async (c, next) => {
-  const header = c.req.header("Authorization");
-  if (!header) {
-    c.status(401);
-    return c.json({ msg: "unauthorized" });
-  }
-
-  const token = header.split(" ")[1];
-  const { id } = await verify(token, c.env.JWT_SECRET);
-
-  if (!id) {
-    c.status(401);
-    return c.json({ msg: "unauthorized" });
-  }
-
-  next();
-});
+const app = new Hono();
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
 });
 
-app.post("/api/v1/signup", async (c) => {
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate());
-
-  const body = await c.req.json();
-
-  try {
-    const user = await prisma.user.create({
-      data: {
-        email: body.email,
-        password: body.password,
-      },
-    });
-
-    const token = await sign({ id: user.id }, c.env.JWT_SECRET);
-
-    return c.json({ jwt: token });
-  } catch (e) {
-    c.status(403);
-    return c.text("User already exists!");
-  }
-});
-
-app.post("/api/v1/signin", async (c) => {
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate());
-
-  try {
-    const body = await c.req.json();
-
-    const user = await prisma.user.findUnique({
-      where: {
-        email: body.email,
-        password: body.password,
-      },
-    });
-
-    if (!user) {
-      c.status(403);
-      return c.json({ msg: "User not found!" });
-    }
-
-    const token = await sign({ id: user.id }, c.env.JWT_SECRET);
-
-    return c.json({ jwt: token });
-  } catch (error) {
-    console.log(error);
-  }
-});
+app.route("/api/v1/user", userRouter);
+app.route("/api/v1/blog", blogRouter);
 
 export default app;
