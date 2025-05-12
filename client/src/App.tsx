@@ -1,6 +1,7 @@
 import "./App.css";
 import { Routes, Route } from "react-router";
 import { ThemeProvider } from "./context/themeProvider";
+import { Toaster } from "@/components/ui/sonner";
 import Navbar from "./components/Navbar";
 import Blog from "./pages/Blog";
 import Signup from "./pages/Signup";
@@ -10,6 +11,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Navbar />
+
       <Routes>
         <Route index element={<Blog />} />
         <Route path="login" element={<Login />} />
@@ -21,6 +23,8 @@ function App() {
         <Route path="trending" element={<Trending />} /> */}
         </Route>
       </Routes>
+
+      <Toaster closeButton />
     </ThemeProvider>
   );
 }

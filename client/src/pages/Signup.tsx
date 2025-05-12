@@ -21,6 +21,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { signupInput, type SignupInput } from "@amulgaurav/medium-common";
+import { apiClient } from "@/utils/axios";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 function Signup() {
   const form = useForm<SignupInput>({
@@ -34,21 +37,21 @@ function Signup() {
 
   async function onSubmit(values: SignupInput) {
     console.log(values);
-    // const { name, email, password } = values;
+    const { name, email, password } = values;
 
-    // try {
-    //   const response = await apiClient.post("/user/signup", {
-    //     name,
-    //     email,
-    //     password,
-    //   });
-    //   localStorage.setItem("token", response.data?.token);
+    try {
+      const { data } = await apiClient.post("/user/signup", {
+        name,
+        email,
+        password,
+      });
+      localStorage.setItem("token", data?.token);
 
-    //   alert("User registered successfully!");
-    //   // router.push("/");
-    // } catch {
-
-    // }
+      toast("User registered successfully!");
+    } catch (err: AxiosError) {
+      console.log("variable: ", err);
+      toast.error(err);
+    }
   }
 
   return (
