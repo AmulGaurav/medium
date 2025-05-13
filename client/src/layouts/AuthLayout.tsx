@@ -13,7 +13,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
         </div>
       </div>
 
-      <div className="invisible md:visible">
+      <div className="hidden lg:block">
         <Quote />
       </div>
     </div>
