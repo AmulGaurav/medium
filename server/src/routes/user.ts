@@ -18,7 +18,7 @@ userRouter.post("/signup", async (c) => {
 
   try {
     const body = await c.req.json();
-    const { success } = signupInput.safeParse(body);
+    const { data, success } = signupInput.safeParse(body);
 
     if (!success) {
       c.status(411);
@@ -29,18 +29,18 @@ userRouter.post("/signup", async (c) => {
 
     const user = await prisma.user.create({
       data: {
-        email: body.email,
-        password: body.password,
-        name: body.name,
+        email: data.email,
+        password: data.password,
+        name: data.name,
       },
     });
 
     const token = await sign({ id: user.id }, c.env.JWT_SECRET);
 
-    return c.json({ jwt: token });
+    return c.json({ token });
   } catch (e) {
     c.status(403);
-    return c.text("User already exists!");
+    return c.json({ message: "User already exists!" });
   }
 });
 
@@ -51,7 +51,7 @@ userRouter.post("/signin", async (c) => {
 
   try {
     const body = await c.req.json();
-    const { success } = signinInput.safeParse(body);
+    const { data, success } = signinInput.safeParse(body);
 
     if (!success) {
       c.status(411);
@@ -62,8 +62,8 @@ userRouter.post("/signin", async (c) => {
 
     const user = await prisma.user.findUnique({
       where: {
-        email: body.email,
-        password: body.password,
+        email: data.email,
+        password: data.password,
       },
     });
 
@@ -74,8 +74,9 @@ userRouter.post("/signin", async (c) => {
 
     const token = await sign({ id: user.id }, c.env.JWT_SECRET);
 
-    return c.json({ jwt: token });
+    return c.json({ token });
   } catch (error) {
     console.log(error);
+    return c.json({ message: "Error occured while signing up!" });
   }
 });

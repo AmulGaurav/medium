@@ -42,7 +42,7 @@ blogRouter.post("/", async (c) => {
 
   try {
     const body = await c.req.json();
-    const { success } = createBlogInput.safeParse(body);
+    const { data, success } = createBlogInput.safeParse(body);
 
     if (!success) {
       c.status(411);
@@ -53,9 +53,10 @@ blogRouter.post("/", async (c) => {
 
     const blog = await prisma.blog.create({
       data: {
-        title: body.title,
-        content: body.content,
+        title: data.title,
+        content: data.content,
         authorId: c.get("userId"),
+        published: data.published,
       },
     });
 
@@ -77,7 +78,7 @@ blogRouter.put("/", async (c) => {
 
   try {
     const body = await c.req.json();
-    const { success } = updateBlogInput.safeParse(body);
+    const { data, success } = updateBlogInput.safeParse(body);
 
     if (!success) {
       c.status(411);
@@ -91,8 +92,9 @@ blogRouter.put("/", async (c) => {
         id: body.id,
       },
       data: {
-        title: body.title,
-        content: body.content,
+        title: data.title,
+        content: data.content,
+        published: data.published,
       },
     });
 
@@ -114,8 +116,18 @@ blogRouter.get("/bulk", async (c) => {
 
   try {
     const blogs = await prisma.blog.findMany({
+      where: {
+        published: true,
+      },
       select: {
+        id: true,
         title: true,
+        content: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 
