@@ -1,9 +1,10 @@
+import axios from "axios";
 import AuthLayout from "@/layouts/AuthLayout";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import {
   CardContent,
   CardDescription,
@@ -23,9 +24,10 @@ import {
 import { signupInput, type SignupInput } from "@amulgaurav/medium-common";
 import { apiClient } from "@/utils/axios";
 import { toast } from "sonner";
-import { AxiosError } from "axios";
 
 function Signup() {
+  const navigate = useNavigate();
+
   const form = useForm<SignupInput>({
     resolver: zodResolver(signupInput),
     defaultValues: {
@@ -36,7 +38,6 @@ function Signup() {
   });
 
   async function onSubmit(values: SignupInput) {
-    console.log(values);
     const { name, email, password } = values;
 
     try {
@@ -47,10 +48,19 @@ function Signup() {
       });
       localStorage.setItem("token", data?.token);
 
-      toast("User registered successfully!");
-    } catch (err: AxiosError) {
-      console.log("variable: ", err);
-      toast.error(err);
+      toast.success("User created successfully!");
+      form.reset();
+      navigate("/");
+    } catch (err: unknown) {
+      console.error("variable: ", err);
+
+      if (axios.isAxiosError(err)) {
+        toast.error(
+          err.response?.data?.message || err.message || "Something went wrong."
+        );
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
     }
   }
 
