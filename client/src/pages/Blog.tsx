@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import useBlog from "@/hooks/useBlog";
 import { formatDateString } from "@/utils/date";
-import AvatarComponent from "@/components/Avatar";
+import AvatarComponent from "@/components/AvatarComponent";
 
 function Blog() {
   const { blogId } = useParams();

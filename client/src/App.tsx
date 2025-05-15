@@ -1,6 +1,6 @@
 import "./App.css";
 import { Routes, Route } from "react-router";
-import { ThemeProvider } from "./context/themeProvider";
+import { ThemeProvider } from "./context/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "./components/Navbar";
 import Blogs from "./pages/Blogs";

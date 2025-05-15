@@ -1,4 +1,4 @@
-import AvatarComponent from "./Avatar";
+import AvatarComponent from "./AvatarComponent";
 import { formatDateString } from "@/utils/date";
 
 interface BlogCardProps {
