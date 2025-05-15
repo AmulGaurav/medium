@@ -6,6 +6,8 @@ import Navbar from "./components/Navbar";
 import Blogs from "./pages/Blogs";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
+import NewBlog from "./pages/NewBlog";
+import Blog from "./pages/Blog";
 
 function App() {
   return (
@@ -17,10 +19,11 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
 
-        <Route path="blogs">
-          <Route index element={<Blogs />} />
-          {/* <Route path=":city" element={<City />} />
-        <Route path="trending" element={<Trending />} /> */}
+        <Route path="blogs" element={<Blogs />} />
+
+        <Route path="blog">
+          <Route path="publish" element={<NewBlog />} />
+          <Route path=":blogId" element={<Blog />} />
         </Route>
       </Routes>
 
