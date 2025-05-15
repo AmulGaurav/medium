@@ -1,9 +1,9 @@
 import {
-  ParagraphNode,
-  TextNode,
   type Klass,
   type LexicalNode,
   type LexicalNodeReplacement,
+  ParagraphNode,
+  TextNode,
 } from "lexical";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 
