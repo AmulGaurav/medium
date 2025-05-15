@@ -1,4 +1,5 @@
 import AvatarComponent from "./Avatar";
+import { formatDateString } from "@/utils/date";
 
 interface BlogCardProps {
   authorName: string;
@@ -20,7 +21,7 @@ function BlogCard({
         <div>
           <span className="text-xs font-light">{authorName}</span> ·{" "}
           <span className="text-xs font-extralight text-slate-500">
-            {publishedDate}
+            {formatDateString(publishedDate)}
           </span>
         </div>
       </div>
