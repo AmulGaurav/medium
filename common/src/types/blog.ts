@@ -4,7 +4,7 @@ export const createBlogInput = z.object({
   title: z
     .string()
     .min(5, { message: "Title must include at least 5 characters!" })
-    .max(60, { message: "Title cannot include more than 60 characters!" }),
+    .max(150, { message: "Title cannot include more than 60 characters!" }),
   content: z.string().min(6, { message: "Content is too short!" }).max(2000, {
     message: "Maximum limit of 2000 characters has been reached!",
   }),
