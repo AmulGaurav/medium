@@ -35,9 +35,13 @@ userRouter.post("/signup", async (c) => {
       },
     });
 
-    const token = await sign({ id: user.id }, c.env.JWT_SECRET);
+    // token expiry: 5 days
+    const token = await sign(
+      { id: user.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 5 },
+      c.env.JWT_SECRET
+    );
 
-    return c.json({ token });
+    return c.json({ name: user.name, token });
   } catch (e) {
     c.status(403);
     return c.json({ message: "User already exists!" });
@@ -72,11 +76,14 @@ userRouter.post("/signin", async (c) => {
       return c.json({ message: "User not found!" });
     }
 
-    const token = await sign({ id: user.id }, c.env.JWT_SECRET);
+    // token expiry: 5 days
+    const token = await sign(
+      { id: user.id, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 5 },
+      c.env.JWT_SECRET
+    );
 
-    return c.json({ token });
+    return c.json({ name: user.name, token });
   } catch (error) {
-    console.log(error);
     return c.json({ message: "Error occured while signing up!" });
   }
 });
