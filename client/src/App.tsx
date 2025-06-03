@@ -8,6 +8,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import NewBlog from "./pages/NewBlog";
 import Blog from "./pages/Blog";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -15,15 +16,18 @@ function App() {
       <Navbar />
 
       <Routes>
-        <Route index element={<Blogs />} />
+        {/* Public Routes */}
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
 
-        <Route path="blogs" element={<Blogs />} />
-
-        <Route path="blog">
-          <Route path="publish" element={<NewBlog />} />
-          <Route path=":blogId" element={<Blog />} />
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route index element={<Blogs />} />
+          <Route path="blogs" element={<Blogs />} />
+          <Route path="blog">
+            <Route path="publish" element={<NewBlog />} />
+            <Route path=":blogId" element={<Blog />} />
+          </Route>
         </Route>
       </Routes>
 

@@ -23,9 +23,15 @@ import {
 } from "@/components/ui/form";
 import { apiClient } from "@/utils/axios";
 import { toast } from "sonner";
+import useLoading from "@/hooks/useLoading";
+import { Loader2 } from "lucide-react";
+import type { IAuthResponse } from "@/types/user";
+import useUserStore from "@/store/userStore";
 
 function Login() {
   const navigate = useNavigate();
+  const setName = useUserStore((state) => state.setUsername);
+  const { isLoading, startLoading, stopLoading } = useLoading();
 
   const form = useForm<SigninInput>({
     resolver: zodResolver(signinInput),
@@ -36,22 +42,24 @@ function Login() {
   });
 
   async function onSubmit(values: SigninInput) {
+    startLoading();
     const { email, password } = values;
 
     try {
-      const { data } = await apiClient.post("/user/signin", {
-        email,
-        password,
-      });
-      console.log("data: ", data);
-      localStorage.setItem("token", data?.token);
+      const { data }: { data: IAuthResponse } = await apiClient.post(
+        "/user/signin",
+        {
+          email,
+          password,
+        }
+      );
+      localStorage.setItem("token", data.token);
+      setName(data.name);
 
       toast.success("Logged in successfully!");
       form.reset();
       navigate("/");
     } catch (err: unknown) {
-      console.error("variable: ", err);
-
       if (axios.isAxiosError(err)) {
         toast.error(
           err?.response?.data?.message || err.message || "Something went wrong."
@@ -59,6 +67,8 @@ function Login() {
       } else {
         toast.error("An unexpected error occurred.");
       }
+    } finally {
+      stopLoading();
     }
   }
 
@@ -103,9 +113,16 @@ function Login() {
                 )}
               />
 
-              <Button type="submit" className="w-full cursor-pointer">
-                Login
-              </Button>
+              {isLoading ? (
+                <Button disabled>
+                  <Loader2 className="animate-spin" />
+                  Logging in
+                </Button>
+              ) : (
+                <Button type="submit" className="w-full cursor-pointer">
+                  Login
+                </Button>
+              )}
             </div>
           </form>
         </Form>

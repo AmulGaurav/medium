@@ -1,12 +1,11 @@
 import type { IBlog } from "@/types/blog";
 import { apiClient } from "@/utils/axios";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 function useBlog(blogId: string) {
   const [loading, setLoading] = useState(true);
   const [blog, setBlog] = useState<IBlog>();
-
-  console.log("blog: ", blog);
 
   useEffect(() => {
     apiClient
@@ -18,8 +17,8 @@ function useBlog(blogId: string) {
       .then(({ data }) => setBlog(data.blog))
       .catch((err) => {
         if (err?.response?.data?.message)
-          console.error(err?.response?.data?.message);
-        else console.error(err.message);
+          toast.error(err?.response?.data?.message);
+        else toast.error(err.message);
       })
       .finally(() => setLoading(false));
   }, [blogId]);

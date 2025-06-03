@@ -1,6 +1,7 @@
 import type { IBlog } from "@/types/blog";
 import { apiClient } from "@/utils/axios";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 function useBlogs() {
   const [loading, setLoading] = useState(true);
@@ -16,8 +17,8 @@ function useBlogs() {
       .then(({ data }) => setBlogs(data.blogs))
       .catch((err) => {
         if (err?.response?.data?.message)
-          console.error(err?.response?.data?.message);
-        else console.error(err.message);
+          toast.error(err?.response?.data?.message);
+        else toast.error(err.message);
       })
       .finally(() => setLoading(false));
   }, []);

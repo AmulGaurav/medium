@@ -24,9 +24,15 @@ import {
 import { signupInput, type SignupInput } from "@amulgaurav/medium-common";
 import { apiClient } from "@/utils/axios";
 import { toast } from "sonner";
+import useLoading from "@/hooks/useLoading";
+import { Loader2 } from "lucide-react";
+import type { IAuthResponse } from "@/types/user";
+import useUserStore from "@/store/userStore";
 
 function Signup() {
   const navigate = useNavigate();
+  const setName = useUserStore((state) => state.setUsername);
+  const { isLoading, startLoading, stopLoading } = useLoading();
 
   const form = useForm<SignupInput>({
     resolver: zodResolver(signupInput),
@@ -38,22 +44,25 @@ function Signup() {
   });
 
   async function onSubmit(values: SignupInput) {
+    startLoading();
     const { name, email, password } = values;
 
     try {
-      const { data } = await apiClient.post("/user/signup", {
-        name,
-        email,
-        password,
-      });
-      localStorage.setItem("token", data?.token);
+      const { data }: { data: IAuthResponse } = await apiClient.post(
+        "/user/signup",
+        {
+          name,
+          email,
+          password,
+        }
+      );
+      localStorage.setItem("token", data.token);
+      setName(data.name);
 
       toast.success("User created successfully!");
       form.reset();
       navigate("/");
     } catch (err: unknown) {
-      console.error("variable: ", err);
-
       if (axios.isAxiosError(err)) {
         toast.error(
           err.response?.data?.message || err.message || "Something went wrong."
@@ -61,6 +70,8 @@ function Signup() {
       } else {
         toast.error("An unexpected error occurred.");
       }
+    } finally {
+      stopLoading();
     }
   }
 
@@ -125,9 +136,16 @@ function Signup() {
                 )}
               />
 
-              <Button type="submit" className="w-full cursor-pointer">
-                Signup
-              </Button>
+              {isLoading ? (
+                <Button disabled>
+                  <Loader2 className="animate-spin" />
+                  Signing up
+                </Button>
+              ) : (
+                <Button type="submit" className="w-full cursor-pointer">
+                  Signup
+                </Button>
+              )}
             </div>
           </form>
         </Form>
